@@ -1,0 +1,10 @@
+syntax = "proto3";
+package common;
+
+option go_package = "github.com/elforg/elfplatform/protos/common";
+
+message SimpleReply {
+    bool success = 1;
+    int32 code = 2;
+    string message = 3;
+}

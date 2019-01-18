@@ -1,0 +1,20 @@
+syntax = "proto3";
+package msp;
+
+import "common/metadata.proto";
+import "common/policy.proto";
+import "msp/channel.proto";
+
+
+option go_package = "github.com/elforg/elfplatform/protos/msp";
+
+message Organization {
+    OrgValue value = 1;
+    common.Policy policy = 2;
+    repeated Organization sub_org = 3;
+    repeated Channel include_channel = 4;
+}
+
+message OrgValue {
+    common.Metadata metadata = 1;
+}

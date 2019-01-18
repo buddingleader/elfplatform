@@ -1,0 +1,28 @@
+syntax = "proto3";
+package common;
+
+import "common/policy.proto";
+import "common/metadata.proto";
+import "common/reply.proto";
+
+option go_package = "github.com/elforg/elfplatform/protos/common";
+
+message Menu {
+    MenuValue value = 1;
+    Policy policy = 2;
+    repeated Menu sub_menu = 3;
+    bool enable =4;
+}
+
+message MenuValue {
+    Metadata metadata = 1;
+    string address = 2; // the menu address
+    int32 level = 3;
+    int32 index = 4; // the index of UI
+}
+
+service MenuService {
+    rpc AddMenu(stream Menu) returns (SimpleReply){}
+    rpc UpdateMenu(stream Menu) returns (SimpleReply){}
+    rpc GetMenu(stream Menu) returns (stream Menu){}
+}

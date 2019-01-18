@@ -1,0 +1,18 @@
+syntax = "proto3";
+package msp;
+
+import "common/menu.proto";
+import "common/policy.proto";
+import "common/metadata.proto";
+
+option go_package = "github.com/elforg/elfplatform/protos/msp";
+
+message Channel {
+    ChannelValue value = 1;
+    common.Policy policy = 2;
+    common.Menu include_menu = 3;
+}
+
+message ChannelValue {
+    common.Metadata metadata = 1;
+}

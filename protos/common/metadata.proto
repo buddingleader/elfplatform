@@ -1,0 +1,19 @@
+syntax = "proto3";
+package common;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/elforg/elfplatform/protos/common";
+
+message Metadata {
+    int32 id = 1;  // Unique ID number for this menu.
+    string name = 2;
+
+    int32 create_author_id = 3;
+    string create_author_name = 4;
+    google.protobuf.Timestamp created = 5;
+    
+    int32 update_author_id = 6;
+    string update_author_name = 7;
+    google.protobuf.Timestamp last_updated = 8;
+}

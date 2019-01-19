@@ -1,14 +1,17 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
-	"io"
 	"net"
 	"sync"
+	"time"
 
 	pb "github.com/elforg/elfplatform/protos/common"
+	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/hyperledger/fabric/common/flogging"
+	"github.com/hyperledger/fabric/common/util"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -45,100 +48,122 @@ func main() {
 		opts = []grpc.ServerOption{grpc.Creds(creds)}
 	}
 	grpcServer := grpc.NewServer(opts...)
-	pb.RegisterMenuServiceServer(grpcServer, newServer())
+	pb.RegisterCRUDServer(grpcServer, newServer())
 	grpcServer.Serve(lis)
 }
 
-type menuServiceServer struct {
-	menus    map[int32]*pb.Menu
-	sequence int32
-	mutex    sync.Mutex // protects routeNotes
+type menuServer struct {
+	menuTree *pb.MenuTree
+	menuMap  map[int32]*pb.Menu
+	count    int32
+	rwmutex  sync.RWMutex // protects routeNotes
 }
 
-func newServer() *menuServiceServer {
-	s := &menuServiceServer{
-		menus: make(map[int32]*pb.Menu),
+func newServer() *menuServer {
+	// get from db
+	root := initialRootMenu()
+	s := &menuServer{
+		menuMap: make(map[int32]*pb.Menu),
 	}
+	s.menuMap[root.Metadata.Id] = root
+	s.count++
 
+	logger.Debugf("the menuMap is %v", s.menuMap)
 	logger.Info("Start menu server")
 	return s
 }
 
-func (ms *menuServiceServer) AddMenu(stream pb.MenuService_AddMenuServer) error {
-	logger.Debug("Add menu start...")
-	for {
-		menu, err := stream.Recv()
-		if err == io.EOF {
-			logger.Debug("Add menu end")
-			return stream.SendAndClose(&pb.SimpleReply{
-				Success: true,
-			})
-		}
-
-		if err != nil {
-			logger.Error(err)
-			return errors.WithStack(err)
-		}
-
-		if ok, err := checkMenu(menu); err != nil && !ok {
-			logger.Error(err)
-			return errors.WithStack(err)
-		}
-
-		ms.mutex.Lock()
-		ms.sequence++
-		menu.Value.Metadata.Id = ms.sequence
-		ms.menus[ms.sequence] = menu
-		ms.mutex.Unlock()
-		// save the menu
-
-		logger.Infof("Add menu:%v", menu)
+func initialRootMenu() *pb.Menu {
+	return &pb.Menu{
+		Metadata: &pb.Metadata{
+			Id:               100000,
+			Name:             "root",
+			CreateAuthorId:   100000,
+			CreateAuthorName: "Admin",
+			Created: &timestamp.Timestamp{
+				Seconds: time.Now().Unix(),
+				Nanos:   0,
+			},
+			UpdateAuthorId:   100000,
+			UpdateAuthorName: "Admin",
+			LastUpdated: &timestamp.Timestamp{
+				Seconds: time.Now().Unix(),
+				Nanos:   0,
+			},
+		},
+		Enable:   true,
+		Policy:   &pb.Policy{},
+		SubMenus: make(map[int32]string),
 	}
 }
 
-func (ms *menuServiceServer) UpdateMenu(stream pb.MenuService_UpdateMenuServer) error {
+func (ms *menuServer) AddMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
+	addr := util.ExtractRemoteAddress(ctx)
+	logger.Debugf("Connection from %s, start to add menu, request: %v", addr, req)
+	defer logger.Debugf("Closing connection from %s, result: %v", addr, menu)
+
+	ms.rwmutex.RLock()
+	rootMenu, has := ms.menuMap[req.RootMenuId]
+	ms.rwmutex.RUnlock()
+	if !has {
+		return nil, fmt.Errorf("cannot found this root menu[id=%v]", req.RootMenuId)
+	}
+	logger.Debugf("rootMenu is %v", rootMenu)
+
+	menu = req.Menu
+	if err = menu.CheckMetadata(); err != nil {
+		logger.Error(err)
+		return nil, errors.WithStack(err)
+	}
+
+	// check if it exists
+	if name, has := rootMenu.SubMenus[menu.Metadata.Id]; has {
+		err = fmt.Errorf("this menu already exists, id=%v, name=%v", menu.Metadata.Id, name)
+		logger.Error(err)
+		return nil, errors.WithStack(err)
+	}
+
+	ms.rwmutex.Lock()
+	defer ms.rwmutex.Unlock()
+	rootMenu.SubMenus[menu.Metadata.Id] = menu.Metadata.Name
+	ms.menuMap[rootMenu.Metadata.Id] = rootMenu
+	ms.menuMap[menu.Metadata.Id] = menu
+	ms.count++
+
+	// TODO: save to db
+	// Put(rootMenu.Metadata.Id, rootMenu)
+	// Put(menu.Metadata.Id, menu)
+
+	logger.Debugf("the new root menu is %v", rootMenu)
+	return menu, nil
+}
+
+func (ms *menuServer) UpdateMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
 	logger.Debug("Update Menu")
 
-	return nil
+	return nil, nil
 }
 
-func (ms *menuServiceServer) GetMenu(stream pb.MenuService_GetMenuServer) error {
-	logger.Debug("Get Menu")
-	for {
-		menu, err := stream.Recv()
-		if err == io.EOF {
-			logger.Debug("Get menu end")
-			return nil
-		}
-		if err != nil {
-			return errors.WithStack(err)
-		}
+func (ms *menuServer) DeleteMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
+	logger.Debug("Delete Menu")
 
-		if ok, err := checkMenu(menu); err != nil && !ok {
-			logger.Error(err)
-			return errors.WithStack(err)
-		}
-
-		if menu.Value.Metadata.GetId() == 0 {
-			err := errors.New("Menu' Id is nil")
-			logger.Error(err)
-			return errors.WithStack(err)
-		}
-		logger.Debugf("Get menu:%v", menu)
-		if err := stream.Send(ms.menus[menu.Value.Metadata.Id]); err != nil {
-			return errors.WithStack(err)
-		}
-	}
+	return nil, nil
 }
 
-func checkMenu(menu *pb.Menu) (bool, error) {
-	if menu.GetValue() == nil {
-		return false, errors.New("Menu' Value is nil")
+func (ms *menuServer) GetMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
+	addr := util.ExtractRemoteAddress(ctx)
+	logger.Debugf("Connection from %s, start to get menu, request: %v", addr, req)
+	defer logger.Debugf("Closing connection from %s, result: %v", addr, menu)
+
+	// check if it exists
+	ms.rwmutex.RLock()
+	menu, has := ms.menuMap[req.RootMenuId]
+	ms.rwmutex.RUnlock()
+	if !has {
+		err = fmt.Errorf("this menu doesn't exists, id=%v", menu.Metadata.Id)
+		logger.Error(err)
+		return nil, errors.WithStack(err)
 	}
 
-	if menu.Value.GetMetadata() == nil {
-		return false, errors.New("Menu' Metadata is nil")
-	}
-
-	return true, nil
+	return menu, nil
 }

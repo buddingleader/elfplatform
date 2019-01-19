@@ -23,13 +23,15 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Menu struct {
-	Value                *MenuValue `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
-	Policy               *Policy    `protobuf:"bytes,2,opt,name=policy,proto3" json:"policy,omitempty"`
-	SubMenu              []*Menu    `protobuf:"bytes,3,rep,name=sub_menu,json=subMenu,proto3" json:"sub_menu,omitempty"`
-	Enable               bool       `protobuf:"varint,4,opt,name=enable,proto3" json:"enable,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
+	Metadata             *Metadata        `protobuf:"bytes,1,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Url                  string           `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	Ico                  string           `protobuf:"bytes,3,opt,name=ico,proto3" json:"ico,omitempty"`
+	Enable               bool             `protobuf:"varint,4,opt,name=enable,proto3" json:"enable,omitempty"`
+	SubMenus             map[int32]string `protobuf:"bytes,5,rep,name=sub_menus,json=subMenus,proto3" json:"sub_menus,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Policy               *Policy          `protobuf:"bytes,6,opt,name=policy,proto3" json:"policy,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
 }
 
 func (m *Menu) Reset()         { *m = Menu{} }
@@ -57,9 +59,37 @@ func (m *Menu) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Menu proto.InternalMessageInfo
 
-func (m *Menu) GetValue() *MenuValue {
+func (m *Menu) GetMetadata() *Metadata {
 	if m != nil {
-		return m.Value
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *Menu) GetUrl() string {
+	if m != nil {
+		return m.Url
+	}
+	return ""
+}
+
+func (m *Menu) GetIco() string {
+	if m != nil {
+		return m.Ico
+	}
+	return ""
+}
+
+func (m *Menu) GetEnable() bool {
+	if m != nil {
+		return m.Enable
+	}
+	return false
+}
+
+func (m *Menu) GetSubMenus() map[int32]string {
+	if m != nil {
+		return m.SubMenus
 	}
 	return nil
 }
@@ -71,114 +101,155 @@ func (m *Menu) GetPolicy() *Policy {
 	return nil
 }
 
-func (m *Menu) GetSubMenu() []*Menu {
-	if m != nil {
-		return m.SubMenu
-	}
-	return nil
+type MenuTree struct {
+	RootMenu             *Menu    `protobuf:"bytes,1,opt,name=rootMenu,proto3" json:"rootMenu,omitempty"`
+	SubMenuIds           []int32  `protobuf:"varint,2,rep,packed,name=sub_menu_ids,json=subMenuIds,proto3" json:"sub_menu_ids,omitempty"`
+	SubMenus             []*Menu  `protobuf:"bytes,3,rep,name=sub_menus,json=subMenus,proto3" json:"sub_menus,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Menu) GetEnable() bool {
-	if m != nil {
-		return m.Enable
-	}
-	return false
-}
-
-type MenuValue struct {
-	Metadata             *Metadata `protobuf:"bytes,1,opt,name=metadata,proto3" json:"metadata,omitempty"`
-	Address              string    `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
-	Level                int32     `protobuf:"varint,3,opt,name=level,proto3" json:"level,omitempty"`
-	Index                int32     `protobuf:"varint,4,opt,name=index,proto3" json:"index,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
-	XXX_unrecognized     []byte    `json:"-"`
-	XXX_sizecache        int32     `json:"-"`
-}
-
-func (m *MenuValue) Reset()         { *m = MenuValue{} }
-func (m *MenuValue) String() string { return proto.CompactTextString(m) }
-func (*MenuValue) ProtoMessage()    {}
-func (*MenuValue) Descriptor() ([]byte, []int) {
+func (m *MenuTree) Reset()         { *m = MenuTree{} }
+func (m *MenuTree) String() string { return proto.CompactTextString(m) }
+func (*MenuTree) ProtoMessage()    {}
+func (*MenuTree) Descriptor() ([]byte, []int) {
 	return fileDescriptor_11feaaa00ea0b31a, []int{1}
 }
 
-func (m *MenuValue) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_MenuValue.Unmarshal(m, b)
+func (m *MenuTree) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MenuTree.Unmarshal(m, b)
 }
-func (m *MenuValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_MenuValue.Marshal(b, m, deterministic)
+func (m *MenuTree) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MenuTree.Marshal(b, m, deterministic)
 }
-func (m *MenuValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MenuValue.Merge(m, src)
+func (m *MenuTree) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MenuTree.Merge(m, src)
 }
-func (m *MenuValue) XXX_Size() int {
-	return xxx_messageInfo_MenuValue.Size(m)
+func (m *MenuTree) XXX_Size() int {
+	return xxx_messageInfo_MenuTree.Size(m)
 }
-func (m *MenuValue) XXX_DiscardUnknown() {
-	xxx_messageInfo_MenuValue.DiscardUnknown(m)
+func (m *MenuTree) XXX_DiscardUnknown() {
+	xxx_messageInfo_MenuTree.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MenuValue proto.InternalMessageInfo
+var xxx_messageInfo_MenuTree proto.InternalMessageInfo
 
-func (m *MenuValue) GetMetadata() *Metadata {
+func (m *MenuTree) GetRootMenu() *Menu {
 	if m != nil {
-		return m.Metadata
+		return m.RootMenu
 	}
 	return nil
 }
 
-func (m *MenuValue) GetAddress() string {
+func (m *MenuTree) GetSubMenuIds() []int32 {
 	if m != nil {
-		return m.Address
+		return m.SubMenuIds
+	}
+	return nil
+}
+
+func (m *MenuTree) GetSubMenus() []*Menu {
+	if m != nil {
+		return m.SubMenus
+	}
+	return nil
+}
+
+type MenuRequest struct {
+	RootMenuId           int32    `protobuf:"varint,1,opt,name=root_menu_id,json=rootMenuId,proto3" json:"root_menu_id,omitempty"`
+	RootMenuName         string   `protobuf:"bytes,2,opt,name=root_menu_name,json=rootMenuName,proto3" json:"root_menu_name,omitempty"`
+	Menu                 *Menu    `protobuf:"bytes,3,opt,name=menu,proto3" json:"menu,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MenuRequest) Reset()         { *m = MenuRequest{} }
+func (m *MenuRequest) String() string { return proto.CompactTextString(m) }
+func (*MenuRequest) ProtoMessage()    {}
+func (*MenuRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_11feaaa00ea0b31a, []int{2}
+}
+
+func (m *MenuRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MenuRequest.Unmarshal(m, b)
+}
+func (m *MenuRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MenuRequest.Marshal(b, m, deterministic)
+}
+func (m *MenuRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MenuRequest.Merge(m, src)
+}
+func (m *MenuRequest) XXX_Size() int {
+	return xxx_messageInfo_MenuRequest.Size(m)
+}
+func (m *MenuRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MenuRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MenuRequest proto.InternalMessageInfo
+
+func (m *MenuRequest) GetRootMenuId() int32 {
+	if m != nil {
+		return m.RootMenuId
+	}
+	return 0
+}
+
+func (m *MenuRequest) GetRootMenuName() string {
+	if m != nil {
+		return m.RootMenuName
 	}
 	return ""
 }
 
-func (m *MenuValue) GetLevel() int32 {
+func (m *MenuRequest) GetMenu() *Menu {
 	if m != nil {
-		return m.Level
+		return m.Menu
 	}
-	return 0
-}
-
-func (m *MenuValue) GetIndex() int32 {
-	if m != nil {
-		return m.Index
-	}
-	return 0
+	return nil
 }
 
 func init() {
 	proto.RegisterType((*Menu)(nil), "common.Menu")
-	proto.RegisterType((*MenuValue)(nil), "common.MenuValue")
+	proto.RegisterMapType((map[int32]string)(nil), "common.Menu.SubMenusEntry")
+	proto.RegisterType((*MenuTree)(nil), "common.MenuTree")
+	proto.RegisterType((*MenuRequest)(nil), "common.MenuRequest")
 }
 
 func init() { proto.RegisterFile("common/menu.proto", fileDescriptor_11feaaa00ea0b31a) }
 
 var fileDescriptor_11feaaa00ea0b31a = []byte{
-	// 346 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0x4f, 0x4f, 0xea, 0x40,
-	0x14, 0xc5, 0xdf, 0x3c, 0x68, 0x0b, 0x97, 0x97, 0x97, 0xc7, 0xf0, 0x34, 0x0d, 0xab, 0x86, 0x85,
-	0x34, 0x41, 0x29, 0x81, 0x4f, 0xa0, 0x1b, 0x57, 0x26, 0x66, 0x88, 0x2e, 0xdc, 0x98, 0x29, 0xbd,
-	0x60, 0x93, 0xe9, 0x9f, 0xb4, 0x53, 0xa2, 0x2b, 0xbf, 0x86, 0x5b, 0xbf, 0xa9, 0x99, 0x3f, 0x45,
-	0x49, 0xdc, 0xb8, 0x6a, 0xce, 0x39, 0xbf, 0x3b, 0xf7, 0x4c, 0x07, 0x86, 0x9b, 0x22, 0xcb, 0x8a,
-	0x3c, 0xca, 0x30, 0x6f, 0xe6, 0x65, 0x55, 0xc8, 0x82, 0xba, 0xc6, 0x1a, 0x8f, 0x6c, 0x54, 0x16,
-	0x22, 0xdd, 0xbc, 0x98, 0x70, 0x7c, 0x72, 0xe0, 0x25, 0x4f, 0xb8, 0xe4, 0xd6, 0xa6, 0xd6, 0xae,
-	0xb0, 0x14, 0x16, 0x9d, 0xbc, 0x11, 0xe8, 0xde, 0x60, 0xde, 0xd0, 0x29, 0x38, 0x7b, 0x2e, 0x1a,
-	0xf4, 0x49, 0x40, 0xc2, 0xc1, 0x72, 0x38, 0x37, 0xf0, 0x5c, 0x85, 0xf7, 0x2a, 0x60, 0x26, 0xa7,
-	0x67, 0xe0, 0x9a, 0x65, 0xfe, 0x6f, 0x4d, 0xfe, 0x6d, 0xc9, 0x5b, 0xed, 0x32, 0x9b, 0xd2, 0x29,
-	0xf4, 0xea, 0x26, 0x7e, 0x54, 0x9d, 0xfd, 0x4e, 0xd0, 0x09, 0x07, 0xcb, 0x3f, 0x5f, 0xcf, 0x64,
-	0x5e, 0xdd, 0xc4, 0x7a, 0xf3, 0x29, 0xb8, 0x98, 0xf3, 0x58, 0xa0, 0xdf, 0x0d, 0x48, 0xd8, 0x63,
-	0x56, 0x4d, 0x5e, 0xa1, 0x7f, 0x58, 0x4e, 0xcf, 0xa1, 0xd7, 0xde, 0xc6, 0x36, 0xfc, 0xf7, 0x79,
-	0x9a, 0xf1, 0xd9, 0x81, 0xa0, 0x3e, 0x78, 0x3c, 0x49, 0x2a, 0xac, 0x6b, 0x5d, 0xb2, 0xcf, 0x5a,
-	0x49, 0xff, 0x83, 0x23, 0x70, 0x8f, 0xc2, 0xef, 0x04, 0x24, 0x74, 0x98, 0x11, 0xca, 0x4d, 0xf3,
-	0x04, 0x9f, 0x75, 0x03, 0x87, 0x19, 0xb1, 0x7c, 0x27, 0x30, 0x50, 0x0d, 0xd6, 0x58, 0xed, 0xd3,
-	0x0d, 0xd2, 0x05, 0x78, 0x97, 0x49, 0xa2, 0x3b, 0x1f, 0x5d, 0x65, 0x3c, 0x6a, 0xd5, 0x3a, 0xcd,
-	0x4a, 0x81, 0x4c, 0xfd, 0xdf, 0xc9, 0xaf, 0x90, 0xd0, 0x15, 0xc0, 0x5d, 0x99, 0x70, 0x89, 0x3f,
-	0x19, 0x9a, 0x81, 0x77, 0x8d, 0xf2, 0x9b, 0x89, 0x23, 0xa5, 0xd0, 0x05, 0xb9, 0xba, 0x78, 0x98,
-	0xed, 0x52, 0xf9, 0xd4, 0xc4, 0x2a, 0x8b, 0x50, 0x6c, 0x8b, 0x6a, 0xa7, 0x3e, 0xa5, 0xe0, 0x72,
-	0x5b, 0x54, 0x59, 0xa4, 0x9f, 0xb9, 0x8e, 0xcc, 0x64, 0xec, 0x6a, 0xb9, 0xfa, 0x08, 0x00, 0x00,
-	0xff, 0xff, 0xfd, 0x9e, 0x32, 0xbc, 0x52, 0x02, 0x00, 0x00,
+	// 433 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x53, 0x4d, 0x6f, 0xd3, 0x40,
+	0x10, 0xc5, 0x71, 0x62, 0xdc, 0x49, 0xa8, 0xca, 0x16, 0x90, 0xe5, 0x93, 0x15, 0x21, 0x64, 0x04,
+	0x38, 0x22, 0x1c, 0x40, 0x70, 0x02, 0x8a, 0x50, 0x0f, 0x45, 0x68, 0xa1, 0x17, 0x2e, 0xd5, 0x3a,
+	0x9e, 0x16, 0x0b, 0xdb, 0x6b, 0xbc, 0xbb, 0xa0, 0x1c, 0xf9, 0x03, 0xfc, 0x32, 0x7e, 0x14, 0xda,
+	0xaf, 0xb4, 0xe9, 0xa9, 0x39, 0xed, 0xce, 0x9b, 0xf7, 0x66, 0xde, 0xb3, 0xb5, 0x70, 0x77, 0xc5,
+	0xdb, 0x96, 0x77, 0x8b, 0x16, 0x3b, 0x55, 0xf4, 0x03, 0x97, 0x9c, 0x44, 0x16, 0x4a, 0x0f, 0x5d,
+	0xab, 0xe7, 0x4d, 0xbd, 0x5a, 0xdb, 0x66, 0x7a, 0x7f, 0xc3, 0x97, 0xac, 0x62, 0x92, 0x59, 0x78,
+	0xfe, 0x77, 0x04, 0xe3, 0x13, 0xec, 0x14, 0x79, 0x0a, 0xb1, 0x6f, 0x25, 0x41, 0x16, 0xe4, 0xd3,
+	0xe5, 0x41, 0x61, 0x25, 0xc5, 0x89, 0xc3, 0xe9, 0x86, 0x41, 0x0e, 0x20, 0x54, 0x43, 0x93, 0x8c,
+	0xb2, 0x20, 0xdf, 0xa3, 0xfa, 0xaa, 0x91, 0x7a, 0xc5, 0x93, 0xd0, 0x22, 0xf5, 0x8a, 0x93, 0x07,
+	0x10, 0x61, 0xc7, 0xca, 0x06, 0x93, 0x71, 0x16, 0xe4, 0x31, 0x75, 0x15, 0x79, 0x09, 0x7b, 0x42,
+	0x95, 0x67, 0xda, 0xb8, 0x48, 0x26, 0x59, 0x98, 0x4f, 0x97, 0xe9, 0xe5, 0xaa, 0x4e, 0x15, 0x5f,
+	0x54, 0xa9, 0x4f, 0xf1, 0xa1, 0x93, 0xc3, 0x9a, 0xc6, 0xc2, 0x95, 0xe4, 0x11, 0x44, 0x36, 0x52,
+	0x12, 0x19, 0x83, 0xfb, 0x5e, 0xf5, 0xd9, 0xa0, 0xd4, 0x75, 0xd3, 0x37, 0x70, 0x67, 0x6b, 0x84,
+	0xf6, 0xf6, 0x03, 0xd7, 0x26, 0xd6, 0x84, 0xea, 0x2b, 0xb9, 0x07, 0x93, 0x5f, 0xac, 0x51, 0xe8,
+	0x12, 0xd8, 0xe2, 0xf5, 0xe8, 0x55, 0x30, 0xff, 0x13, 0x40, 0xac, 0xa5, 0x5f, 0x07, 0x44, 0x92,
+	0x43, 0x3c, 0x70, 0x2e, 0x75, 0xed, 0x3e, 0xca, 0xec, 0xaa, 0x53, 0xba, 0xe9, 0x92, 0x0c, 0x66,
+	0x3e, 0xd4, 0x59, 0x5d, 0x89, 0x64, 0x94, 0x85, 0xf9, 0x84, 0x82, 0xf3, 0x7e, 0x5c, 0x09, 0xf2,
+	0xf8, 0x6a, 0xec, 0xd0, 0xc4, 0xbe, 0x36, 0xcc, 0x07, 0x9d, 0xff, 0x86, 0xa9, 0x41, 0xf0, 0xa7,
+	0x42, 0x21, 0xf5, 0x6c, 0xbd, 0xc7, 0x0f, 0x77, 0x39, 0xc0, 0xef, 0x3e, 0xae, 0xc8, 0x43, 0xd8,
+	0xbf, 0x64, 0x74, 0xac, 0xf5, 0xb9, 0x66, 0x9e, 0xf3, 0x89, 0xb5, 0x48, 0x32, 0x18, 0x6b, 0x82,
+	0xf9, 0x47, 0xd7, 0x97, 0x9b, 0xce, 0xf2, 0x5f, 0x00, 0xe3, 0xf7, 0xf4, 0xf4, 0x88, 0x14, 0x70,
+	0xfb, 0x6d, 0x55, 0x99, 0x64, 0x87, 0x5b, 0x3c, 0x6b, 0x29, 0xdd, 0x12, 0xcf, 0x6f, 0x69, 0xfe,
+	0x47, 0x94, 0x37, 0xe7, 0x3f, 0x07, 0x38, 0xed, 0x2b, 0x26, 0x71, 0x27, 0xc9, 0x11, 0x36, 0xb8,
+	0x83, 0xe4, 0xdd, 0xb3, 0x6f, 0x4f, 0x2e, 0x6a, 0xf9, 0x5d, 0x95, 0x1a, 0x5f, 0x60, 0x73, 0xce,
+	0x87, 0x0b, 0x7d, 0xf4, 0x0d, 0x93, 0xe7, 0x7c, 0x68, 0x17, 0xe6, 0x0d, 0x88, 0x85, 0x55, 0x95,
+	0x91, 0x29, 0x5f, 0xfc, 0x0f, 0x00, 0x00, 0xff, 0xff, 0xb7, 0x2b, 0x26, 0x50, 0x5b, 0x03, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -189,232 +260,165 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// MenuServiceClient is the client API for MenuService service.
+// CRUDClient is the client API for CRUD service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type MenuServiceClient interface {
-	AddMenu(ctx context.Context, opts ...grpc.CallOption) (MenuService_AddMenuClient, error)
-	UpdateMenu(ctx context.Context, opts ...grpc.CallOption) (MenuService_UpdateMenuClient, error)
-	GetMenu(ctx context.Context, opts ...grpc.CallOption) (MenuService_GetMenuClient, error)
+type CRUDClient interface {
+	AddMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
+	GetMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
+	UpdateMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
+	DeleteMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
 }
 
-type menuServiceClient struct {
+type cRUDClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewMenuServiceClient(cc *grpc.ClientConn) MenuServiceClient {
-	return &menuServiceClient{cc}
+func NewCRUDClient(cc *grpc.ClientConn) CRUDClient {
+	return &cRUDClient{cc}
 }
 
-func (c *menuServiceClient) AddMenu(ctx context.Context, opts ...grpc.CallOption) (MenuService_AddMenuClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_MenuService_serviceDesc.Streams[0], "/common.MenuService/AddMenu", opts...)
+func (c *cRUDClient) AddMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+	out := new(Menu)
+	err := c.cc.Invoke(ctx, "/common.CRUD/AddMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &menuServiceAddMenuClient{stream}
-	return x, nil
+	return out, nil
 }
 
-type MenuService_AddMenuClient interface {
-	Send(*Menu) error
-	CloseAndRecv() (*SimpleReply, error)
-	grpc.ClientStream
-}
-
-type menuServiceAddMenuClient struct {
-	grpc.ClientStream
-}
-
-func (x *menuServiceAddMenuClient) Send(m *Menu) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *menuServiceAddMenuClient) CloseAndRecv() (*SimpleReply, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(SimpleReply)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *menuServiceClient) UpdateMenu(ctx context.Context, opts ...grpc.CallOption) (MenuService_UpdateMenuClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_MenuService_serviceDesc.Streams[1], "/common.MenuService/UpdateMenu", opts...)
+func (c *cRUDClient) GetMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+	out := new(Menu)
+	err := c.cc.Invoke(ctx, "/common.CRUD/GetMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &menuServiceUpdateMenuClient{stream}
-	return x, nil
+	return out, nil
 }
 
-type MenuService_UpdateMenuClient interface {
-	Send(*Menu) error
-	CloseAndRecv() (*SimpleReply, error)
-	grpc.ClientStream
-}
-
-type menuServiceUpdateMenuClient struct {
-	grpc.ClientStream
-}
-
-func (x *menuServiceUpdateMenuClient) Send(m *Menu) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *menuServiceUpdateMenuClient) CloseAndRecv() (*SimpleReply, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(SimpleReply)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *menuServiceClient) GetMenu(ctx context.Context, opts ...grpc.CallOption) (MenuService_GetMenuClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_MenuService_serviceDesc.Streams[2], "/common.MenuService/GetMenu", opts...)
+func (c *cRUDClient) UpdateMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+	out := new(Menu)
+	err := c.cc.Invoke(ctx, "/common.CRUD/UpdateMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &menuServiceGetMenuClient{stream}
-	return x, nil
+	return out, nil
 }
 
-type MenuService_GetMenuClient interface {
-	Send(*Menu) error
-	Recv() (*Menu, error)
-	grpc.ClientStream
-}
-
-type menuServiceGetMenuClient struct {
-	grpc.ClientStream
-}
-
-func (x *menuServiceGetMenuClient) Send(m *Menu) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *menuServiceGetMenuClient) Recv() (*Menu, error) {
-	m := new(Menu)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
+func (c *cRUDClient) DeleteMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+	out := new(Menu)
+	err := c.cc.Invoke(ctx, "/common.CRUD/DeleteMenu", in, out, opts...)
+	if err != nil {
 		return nil, err
 	}
-	return m, nil
+	return out, nil
 }
 
-// MenuServiceServer is the server API for MenuService service.
-type MenuServiceServer interface {
-	AddMenu(MenuService_AddMenuServer) error
-	UpdateMenu(MenuService_UpdateMenuServer) error
-	GetMenu(MenuService_GetMenuServer) error
+// CRUDServer is the server API for CRUD service.
+type CRUDServer interface {
+	AddMenu(context.Context, *MenuRequest) (*Menu, error)
+	GetMenu(context.Context, *MenuRequest) (*Menu, error)
+	UpdateMenu(context.Context, *MenuRequest) (*Menu, error)
+	DeleteMenu(context.Context, *MenuRequest) (*Menu, error)
 }
 
-func RegisterMenuServiceServer(s *grpc.Server, srv MenuServiceServer) {
-	s.RegisterService(&_MenuService_serviceDesc, srv)
+func RegisterCRUDServer(s *grpc.Server, srv CRUDServer) {
+	s.RegisterService(&_CRUD_serviceDesc, srv)
 }
 
-func _MenuService_AddMenu_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MenuServiceServer).AddMenu(&menuServiceAddMenuServer{stream})
-}
-
-type MenuService_AddMenuServer interface {
-	SendAndClose(*SimpleReply) error
-	Recv() (*Menu, error)
-	grpc.ServerStream
-}
-
-type menuServiceAddMenuServer struct {
-	grpc.ServerStream
-}
-
-func (x *menuServiceAddMenuServer) SendAndClose(m *SimpleReply) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *menuServiceAddMenuServer) Recv() (*Menu, error) {
-	m := new(Menu)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
+func _CRUD_AddMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MenuRequest)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return m, nil
+	if interceptor == nil {
+		return srv.(CRUDServer).AddMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/common.CRUD/AddMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRUDServer).AddMenu(ctx, req.(*MenuRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-func _MenuService_UpdateMenu_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MenuServiceServer).UpdateMenu(&menuServiceUpdateMenuServer{stream})
-}
-
-type MenuService_UpdateMenuServer interface {
-	SendAndClose(*SimpleReply) error
-	Recv() (*Menu, error)
-	grpc.ServerStream
-}
-
-type menuServiceUpdateMenuServer struct {
-	grpc.ServerStream
-}
-
-func (x *menuServiceUpdateMenuServer) SendAndClose(m *SimpleReply) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *menuServiceUpdateMenuServer) Recv() (*Menu, error) {
-	m := new(Menu)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
+func _CRUD_GetMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MenuRequest)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return m, nil
+	if interceptor == nil {
+		return srv.(CRUDServer).GetMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/common.CRUD/GetMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRUDServer).GetMenu(ctx, req.(*MenuRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-func _MenuService_GetMenu_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MenuServiceServer).GetMenu(&menuServiceGetMenuServer{stream})
-}
-
-type MenuService_GetMenuServer interface {
-	Send(*Menu) error
-	Recv() (*Menu, error)
-	grpc.ServerStream
-}
-
-type menuServiceGetMenuServer struct {
-	grpc.ServerStream
-}
-
-func (x *menuServiceGetMenuServer) Send(m *Menu) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *menuServiceGetMenuServer) Recv() (*Menu, error) {
-	m := new(Menu)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
+func _CRUD_UpdateMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MenuRequest)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return m, nil
+	if interceptor == nil {
+		return srv.(CRUDServer).UpdateMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/common.CRUD/UpdateMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRUDServer).UpdateMenu(ctx, req.(*MenuRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-var _MenuService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "common.MenuService",
-	HandlerType: (*MenuServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams: []grpc.StreamDesc{
+func _CRUD_DeleteMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MenuRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRUDServer).DeleteMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/common.CRUD/DeleteMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRUDServer).DeleteMenu(ctx, req.(*MenuRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _CRUD_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "common.CRUD",
+	HandlerType: (*CRUDServer)(nil),
+	Methods: []grpc.MethodDesc{
 		{
-			StreamName:    "AddMenu",
-			Handler:       _MenuService_AddMenu_Handler,
-			ClientStreams: true,
+			MethodName: "AddMenu",
+			Handler:    _CRUD_AddMenu_Handler,
 		},
 		{
-			StreamName:    "UpdateMenu",
-			Handler:       _MenuService_UpdateMenu_Handler,
-			ClientStreams: true,
+			MethodName: "GetMenu",
+			Handler:    _CRUD_GetMenu_Handler,
 		},
 		{
-			StreamName:    "GetMenu",
-			Handler:       _MenuService_GetMenu_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
+			MethodName: "UpdateMenu",
+			Handler:    _CRUD_UpdateMenu_Handler,
+		},
+		{
+			MethodName: "DeleteMenu",
+			Handler:    _CRUD_DeleteMenu_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "common/menu.proto",
 }

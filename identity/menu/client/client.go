@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"flag"
-	"io"
 	"time"
 
 	pb "github.com/elforg/elfplatform/protos/common"
+	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/hyperledger/fabric/common/flogging"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -41,74 +41,84 @@ func main() {
 		logger.Fatalf("fail to dial: %v", err)
 	}
 	defer conn.Close()
-	client := pb.NewMenuServiceClient(conn)
-	addMenu(client, &pb.Menu{
-		Enable: true,
-		Value: &pb.MenuValue{
-			Metadata: &pb.Metadata{},
+	client := pb.NewCRUDClient(conn)
+	menu1 := &pb.Menu{
+		Metadata: &pb.Metadata{
+			Id:               1,
+			Name:             "child1",
+			CreateAuthorId:   0,
+			CreateAuthorName: "Admin",
+			Created: &timestamp.Timestamp{
+				Seconds: time.Now().Unix(),
+				Nanos:   0,
+			},
+			UpdateAuthorId:   0,
+			UpdateAuthorName: "Admin",
+			LastUpdated: &timestamp.Timestamp{
+				Seconds: time.Now().Unix(),
+				Nanos:   0,
+			},
 		},
-	})
-	getMenu(client, &pb.Menu{
-		Enable: true,
-		Value: &pb.MenuValue{
-			Metadata: &pb.Metadata{Id: 1},
+		Enable:   true,
+		Policy:   &pb.Policy{},
+		SubMenus: make(map[int32]string, 0),
+	}
+	menu2 := &pb.Menu{
+		Metadata: &pb.Metadata{
+			Id:               2,
+			Name:             "child2",
+			CreateAuthorId:   0,
+			CreateAuthorName: "Admin",
+			Created: &timestamp.Timestamp{
+				Seconds: time.Now().Unix(),
+				Nanos:   0,
+			},
+			UpdateAuthorId:   0,
+			UpdateAuthorName: "Admin",
+			LastUpdated: &timestamp.Timestamp{
+				Seconds: time.Now().Unix(),
+				Nanos:   0,
+			},
 		},
-	})
+		Enable:   true,
+		Policy:   &pb.Policy{},
+		SubMenus: make(map[int32]string, 0),
+	}
+	addMenu(client, 100000, menu1)
+	addMenu(client, 100000, menu2)
+	getMenu(client, menu1.Metadata.Id)
+	getMenu(client, menu2.Metadata.Id)
 }
 
-func addMenu(client pb.MenuServiceClient, menu *pb.Menu) {
+func addMenu(client pb.CRUDClient, id int32, menu *pb.Menu) {
 	logger.Debug("Add menu")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	stream, err := client.AddMenu(ctx)
+	req := &pb.MenuRequest{
+		RootMenuId: id,
+		Menu:       menu,
+	}
+	result, err := client.AddMenu(ctx, req)
 	if err != nil {
-		logger.Fatalf("%v.AddMenu(_) = _, %v", client, err)
+		logger.Fatalf("%v.AddMenu(req: %v) = _, %v", client, req, err)
 	}
 
-	if err := stream.Send(menu); err != nil {
-		logger.Fatalf("%v.Send(%v) = %v", stream, menu, err)
-	}
-
-	reply, err := stream.CloseAndRecv()
-	if err != nil {
-		logger.Fatalf("%v.CloseAndRecv() got error %v, want %v", stream, err, nil)
-	}
-
-	logger.Debugf("add menu result: %v", reply)
+	logger.Debugf("add menu result: %v", result)
 }
 
-func getMenu(client pb.MenuServiceClient, menu *pb.Menu) {
+func getMenu(client pb.CRUDClient, id int32) {
 	logger.Debug("Get menu")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	stream, err := client.GetMenu(ctx)
+	req := &pb.MenuRequest{
+		RootMenuId: id,
+	}
+	result, err := client.GetMenu(ctx, req)
 	if err != nil {
-		logger.Fatalf("%v.AddMenu(_) = _, %v", client, err)
+		logger.Fatalf("%v.GetMenu(req: %v) = _, %v", client, req, err)
 	}
 
-	waitc := make(chan struct{})
-	go func() {
-		for {
-			m, err := stream.Recv()
-			if err == io.EOF {
-				// read done.
-				close(waitc)
-				return
-			}
-
-			if err != nil {
-				logger.Fatalf("Failed to receive a menu : %v", err)
-			}
-
-			logger.Debugf("Got menu %s at id(%d)", m, menu.Value.Metadata.Id)
-		}
-	}()
-
-	if err := stream.Send(menu); err != nil {
-		logger.Fatalf("Failed to send a menu: %v", err)
-	}
-	stream.CloseSend()
-	<-waitc
+	logger.Debugf("get menu result: %v", result)
 }

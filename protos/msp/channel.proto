@@ -8,11 +8,18 @@ import "common/metadata.proto";
 option go_package = "github.com/elforg/elfplatform/protos/msp";
 
 message Channel {
-    ChannelValue value = 1;
+    common.Metadata metadata = 1;
     common.Policy policy = 2;
-    common.Menu include_menu = 3;
+    common.MenuTree menu_tree = 3;
 }
 
-message ChannelValue {
-    common.Metadata metadata = 1;
+service ChannelManager {
+    rpc CreateChannel(ChannelRequest) returns (Channel){}
+    rpc GetChannel(ChannelRequest) returns (Channel){}
+    rpc UpdateChannel(ChannelRequest) returns (Channel){}
+    rpc DeleteChannel(ChannelRequest) returns (Channel){}
+}
+
+message ChannelRequest {
+    Channel request = 1;
 }

@@ -1,10 +1,8 @@
-package main
+package menu
 
 import (
 	"context"
-	"flag"
 	"fmt"
-	"net"
 	"sync"
 	"time"
 
@@ -13,63 +11,29 @@ import (
 	"github.com/hyperledger/fabric/common/flogging"
 	"github.com/hyperledger/fabric/common/util"
 	"github.com/pkg/errors"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/testdata"
 )
 
-var (
-	tls        = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
-	certFile   = flag.String("cert_file", "", "The TLS cert file")
-	keyFile    = flag.String("key_file", "", "The TLS key file")
-	jsonDBFile = flag.String("json_db_file", "", "A json file containing a list of features")
-	port       = flag.Int("port", 10000, "The server port")
-	logger     = flogging.MustGetLogger("menu.server")
-)
-
-func main() {
-	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
-	if err != nil {
-		logger.Fatalf("failed to listen: %v", err)
-	}
-	var opts []grpc.ServerOption
-	if *tls {
-		if *certFile == "" {
-			*certFile = testdata.Path("server1.pem")
-		}
-		if *keyFile == "" {
-			*keyFile = testdata.Path("server1.key")
-		}
-		creds, err := credentials.NewServerTLSFromFile(*certFile, *keyFile)
-		if err != nil {
-			logger.Fatalf("Failed to generate credentials %v", err)
-		}
-		opts = []grpc.ServerOption{grpc.Creds(creds)}
-	}
-	grpcServer := grpc.NewServer(opts...)
-	pb.RegisterCRUDServer(grpcServer, newServer())
-	grpcServer.Serve(lis)
+// Server to manager crud
+type Server struct {
+	menuMap map[int32]*pb.Menu
+	count   int32
+	rwmutex sync.RWMutex
+	logger  *flogging.FabricLogger
 }
 
-type menuServer struct {
-	menuTree *pb.MenuTree
-	menuMap  map[int32]*pb.Menu
-	count    int32
-	rwmutex  sync.RWMutex // protects routeNotes
-}
-
-func newServer() *menuServer {
+// NewServer returns a menu server
+func NewServer() *Server {
 	// get from db
 	root := initialRootMenu()
-	s := &menuServer{
+	s := &Server{
 		menuMap: make(map[int32]*pb.Menu),
+		logger:  flogging.MustGetLogger("menu.server"),
 	}
 	s.menuMap[root.Metadata.Id] = root
 	s.count++
 
-	logger.Debugf("the menuMap is %v", s.menuMap)
-	logger.Info("Start menu server")
+	s.logger.Debugf("the menuMap is %v", s.menuMap)
+	s.logger.Info("Start menu service")
 	return s
 }
 
@@ -97,7 +61,7 @@ func initialRootMenu() *pb.Menu {
 	}
 }
 
-func (ms *menuServer) AddMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
+func (ms *Server) AddMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
 	addr := util.ExtractRemoteAddress(ctx)
 	logger.Debugf("Connection from %s, start to add menu, request: %v", addr, req)
 	defer logger.Debugf("Closing connection from %s, result: %v", addr, menu)
@@ -138,19 +102,19 @@ func (ms *menuServer) AddMenu(ctx context.Context, req *pb.MenuRequest) (menu *p
 	return menu, nil
 }
 
-func (ms *menuServer) UpdateMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
+func (ms *Server) UpdateMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
 	logger.Debug("Update Menu")
 
 	return nil, nil
 }
 
-func (ms *menuServer) DeleteMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
+func (ms *Server) DeleteMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
 	logger.Debug("Delete Menu")
 
 	return nil, nil
 }
 
-func (ms *menuServer) GetMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
+func (ms *Server) GetMenu(ctx context.Context, req *pb.MenuRequest) (menu *pb.Menu, err error) {
 	addr := util.ExtractRemoteAddress(ctx)
 	logger.Debugf("Connection from %s, start to get menu, request: %v", addr, req)
 	defer logger.Debugf("Closing connection from %s, result: %v", addr, menu)

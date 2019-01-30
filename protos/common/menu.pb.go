@@ -160,6 +160,7 @@ type MenuRequest struct {
 	RootMenuId           int32    `protobuf:"varint,1,opt,name=root_menu_id,json=rootMenuId,proto3" json:"root_menu_id,omitempty"`
 	RootMenuName         string   `protobuf:"bytes,2,opt,name=root_menu_name,json=rootMenuName,proto3" json:"root_menu_name,omitempty"`
 	Menu                 *Menu    `protobuf:"bytes,3,opt,name=menu,proto3" json:"menu,omitempty"`
+	Enable               bool     `protobuf:"varint,4,opt,name=enable,proto3" json:"enable,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -211,6 +212,13 @@ func (m *MenuRequest) GetMenu() *Menu {
 	return nil
 }
 
+func (m *MenuRequest) GetEnable() bool {
+	if m != nil {
+		return m.Enable
+	}
+	return false
+}
+
 func init() {
 	proto.RegisterType((*Menu)(nil), "common.Menu")
 	proto.RegisterMapType((map[int32]string)(nil), "common.Menu.SubMenusEntry")
@@ -221,35 +229,37 @@ func init() {
 func init() { proto.RegisterFile("common/menu.proto", fileDescriptor_11feaaa00ea0b31a) }
 
 var fileDescriptor_11feaaa00ea0b31a = []byte{
-	// 433 bytes of a gzipped FileDescriptorProto
+	// 469 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x53, 0x4d, 0x6f, 0xd3, 0x40,
-	0x10, 0xc5, 0x71, 0x62, 0xdc, 0x49, 0xa8, 0xca, 0x16, 0x90, 0xe5, 0x93, 0x15, 0x21, 0x64, 0x04,
-	0x38, 0x22, 0x1c, 0x40, 0x70, 0x02, 0x8a, 0x50, 0x0f, 0x45, 0x68, 0xa1, 0x17, 0x2e, 0xd5, 0x3a,
-	0x9e, 0x16, 0x0b, 0xdb, 0x6b, 0xbc, 0xbb, 0xa0, 0x1c, 0xf9, 0x03, 0xfc, 0x32, 0x7e, 0x14, 0xda,
-	0xaf, 0xb4, 0xe9, 0xa9, 0x39, 0xed, 0xce, 0x9b, 0xf7, 0x66, 0xde, 0xb3, 0xb5, 0x70, 0x77, 0xc5,
-	0xdb, 0x96, 0x77, 0x8b, 0x16, 0x3b, 0x55, 0xf4, 0x03, 0x97, 0x9c, 0x44, 0x16, 0x4a, 0x0f, 0x5d,
-	0xab, 0xe7, 0x4d, 0xbd, 0x5a, 0xdb, 0x66, 0x7a, 0x7f, 0xc3, 0x97, 0xac, 0x62, 0x92, 0x59, 0x78,
-	0xfe, 0x77, 0x04, 0xe3, 0x13, 0xec, 0x14, 0x79, 0x0a, 0xb1, 0x6f, 0x25, 0x41, 0x16, 0xe4, 0xd3,
-	0xe5, 0x41, 0x61, 0x25, 0xc5, 0x89, 0xc3, 0xe9, 0x86, 0x41, 0x0e, 0x20, 0x54, 0x43, 0x93, 0x8c,
-	0xb2, 0x20, 0xdf, 0xa3, 0xfa, 0xaa, 0x91, 0x7a, 0xc5, 0x93, 0xd0, 0x22, 0xf5, 0x8a, 0x93, 0x07,
-	0x10, 0x61, 0xc7, 0xca, 0x06, 0x93, 0x71, 0x16, 0xe4, 0x31, 0x75, 0x15, 0x79, 0x09, 0x7b, 0x42,
-	0x95, 0x67, 0xda, 0xb8, 0x48, 0x26, 0x59, 0x98, 0x4f, 0x97, 0xe9, 0xe5, 0xaa, 0x4e, 0x15, 0x5f,
-	0x54, 0xa9, 0x4f, 0xf1, 0xa1, 0x93, 0xc3, 0x9a, 0xc6, 0xc2, 0x95, 0xe4, 0x11, 0x44, 0x36, 0x52,
-	0x12, 0x19, 0x83, 0xfb, 0x5e, 0xf5, 0xd9, 0xa0, 0xd4, 0x75, 0xd3, 0x37, 0x70, 0x67, 0x6b, 0x84,
-	0xf6, 0xf6, 0x03, 0xd7, 0x26, 0xd6, 0x84, 0xea, 0x2b, 0xb9, 0x07, 0x93, 0x5f, 0xac, 0x51, 0xe8,
-	0x12, 0xd8, 0xe2, 0xf5, 0xe8, 0x55, 0x30, 0xff, 0x13, 0x40, 0xac, 0xa5, 0x5f, 0x07, 0x44, 0x92,
-	0x43, 0x3c, 0x70, 0x2e, 0x75, 0xed, 0x3e, 0xca, 0xec, 0xaa, 0x53, 0xba, 0xe9, 0x92, 0x0c, 0x66,
-	0x3e, 0xd4, 0x59, 0x5d, 0x89, 0x64, 0x94, 0x85, 0xf9, 0x84, 0x82, 0xf3, 0x7e, 0x5c, 0x09, 0xf2,
-	0xf8, 0x6a, 0xec, 0xd0, 0xc4, 0xbe, 0x36, 0xcc, 0x07, 0x9d, 0xff, 0x86, 0xa9, 0x41, 0xf0, 0xa7,
-	0x42, 0x21, 0xf5, 0x6c, 0xbd, 0xc7, 0x0f, 0x77, 0x39, 0xc0, 0xef, 0x3e, 0xae, 0xc8, 0x43, 0xd8,
-	0xbf, 0x64, 0x74, 0xac, 0xf5, 0xb9, 0x66, 0x9e, 0xf3, 0x89, 0xb5, 0x48, 0x32, 0x18, 0x6b, 0x82,
-	0xf9, 0x47, 0xd7, 0x97, 0x9b, 0xce, 0xf2, 0x5f, 0x00, 0xe3, 0xf7, 0xf4, 0xf4, 0x88, 0x14, 0x70,
-	0xfb, 0x6d, 0x55, 0x99, 0x64, 0x87, 0x5b, 0x3c, 0x6b, 0x29, 0xdd, 0x12, 0xcf, 0x6f, 0x69, 0xfe,
-	0x47, 0x94, 0x37, 0xe7, 0x3f, 0x07, 0x38, 0xed, 0x2b, 0x26, 0x71, 0x27, 0xc9, 0x11, 0x36, 0xb8,
-	0x83, 0xe4, 0xdd, 0xb3, 0x6f, 0x4f, 0x2e, 0x6a, 0xf9, 0x5d, 0x95, 0x1a, 0x5f, 0x60, 0x73, 0xce,
-	0x87, 0x0b, 0x7d, 0xf4, 0x0d, 0x93, 0xe7, 0x7c, 0x68, 0x17, 0xe6, 0x0d, 0x88, 0x85, 0x55, 0x95,
-	0x91, 0x29, 0x5f, 0xfc, 0x0f, 0x00, 0x00, 0xff, 0xff, 0xb7, 0x2b, 0x26, 0x50, 0x5b, 0x03, 0x00,
-	0x00,
+	0x10, 0xc5, 0x76, 0x62, 0xb9, 0x93, 0x10, 0x85, 0x2d, 0x20, 0xcb, 0x27, 0x2b, 0x42, 0xc8, 0x08,
+	0x48, 0x94, 0x70, 0x28, 0x82, 0x5b, 0x69, 0x85, 0x72, 0x08, 0x42, 0x2e, 0x5c, 0xb8, 0x54, 0x6b,
+	0x7b, 0x9a, 0x5a, 0xd8, 0xde, 0xb0, 0xde, 0x45, 0xca, 0x91, 0x3f, 0x00, 0xbf, 0x8b, 0x7f, 0x85,
+	0xf6, 0xc3, 0x69, 0x53, 0x09, 0x29, 0x3d, 0x79, 0xe7, 0xcd, 0x7b, 0x33, 0xef, 0xed, 0xca, 0xf0,
+	0x28, 0x67, 0x75, 0xcd, 0x9a, 0x59, 0x8d, 0x8d, 0x9c, 0x6e, 0x38, 0x13, 0x8c, 0xf8, 0x06, 0x8a,
+	0x8e, 0x6d, 0x6b, 0xc3, 0xaa, 0x32, 0xdf, 0x9a, 0x66, 0xf4, 0x64, 0xc7, 0x17, 0xb4, 0xa0, 0x82,
+	0x1a, 0x78, 0xf2, 0xdb, 0x85, 0xde, 0x0a, 0x1b, 0x49, 0x5e, 0x41, 0xd0, 0xb5, 0x42, 0x27, 0x76,
+	0x92, 0xc1, 0x62, 0x3c, 0x35, 0x92, 0xe9, 0xca, 0xe2, 0xe9, 0x8e, 0x41, 0xc6, 0xe0, 0x49, 0x5e,
+	0x85, 0x6e, 0xec, 0x24, 0x47, 0xa9, 0x3a, 0x2a, 0xa4, 0xcc, 0x59, 0xe8, 0x19, 0xa4, 0xcc, 0x19,
+	0x79, 0x0a, 0x3e, 0x36, 0x34, 0xab, 0x30, 0xec, 0xc5, 0x4e, 0x12, 0xa4, 0xb6, 0x22, 0x27, 0x70,
+	0xd4, 0xca, 0xec, 0x52, 0x19, 0x6f, 0xc3, 0x7e, 0xec, 0x25, 0x83, 0x45, 0x74, 0xb3, 0xaa, 0x91,
+	0xd3, 0x0b, 0x99, 0xa9, 0x6f, 0x7b, 0xde, 0x08, 0xbe, 0x4d, 0x83, 0xd6, 0x96, 0xe4, 0x39, 0xf8,
+	0x26, 0x52, 0xe8, 0x6b, 0x83, 0xa3, 0x4e, 0xf5, 0x59, 0xa3, 0xa9, 0xed, 0x46, 0xef, 0xe1, 0xe1,
+	0xde, 0x08, 0xe5, 0xed, 0x3b, 0x6e, 0x75, 0xac, 0x7e, 0xaa, 0x8e, 0xe4, 0x31, 0xf4, 0x7f, 0xd2,
+	0x4a, 0xa2, 0x4d, 0x60, 0x8a, 0x77, 0xee, 0x5b, 0x67, 0xf2, 0xcb, 0x81, 0x40, 0x49, 0xbf, 0x70,
+	0x44, 0x92, 0x40, 0xc0, 0x19, 0x13, 0xaa, 0xb6, 0x97, 0x32, 0xbc, 0xed, 0x34, 0xdd, 0x75, 0x49,
+	0x0c, 0xc3, 0x2e, 0xd4, 0x65, 0x59, 0xb4, 0xa1, 0x1b, 0x7b, 0x49, 0x3f, 0x05, 0xeb, 0x7d, 0x59,
+	0xb4, 0xe4, 0xc5, 0xed, 0xd8, 0x9e, 0x8e, 0x7d, 0x67, 0x58, 0x17, 0x74, 0xf2, 0xc7, 0x81, 0x81,
+	0x86, 0xf0, 0x87, 0xc4, 0x56, 0xa8, 0xe1, 0x6a, 0x51, 0x37, 0xdd, 0x06, 0x81, 0x6e, 0xf9, 0xb2,
+	0x20, 0xcf, 0x60, 0x74, 0xc3, 0x68, 0x68, 0xdd, 0x05, 0x1b, 0x76, 0x9c, 0x4f, 0xb4, 0x46, 0x12,
+	0x43, 0x4f, 0x11, 0xf4, 0x23, 0xdd, 0xdd, 0xae, 0x3b, 0xff, 0x7b, 0xb3, 0xc5, 0x5f, 0x17, 0x46,
+	0x8a, 0xb6, 0xa2, 0x0d, 0x5d, 0x63, 0x8d, 0x8d, 0x20, 0x73, 0x80, 0x0f, 0x1c, 0xa9, 0x40, 0x9d,
+	0xff, 0x78, 0x6f, 0x98, 0xf1, 0x1d, 0xed, 0x6d, 0x98, 0x3c, 0x20, 0x0b, 0x18, 0x7c, 0x44, 0x6d,
+	0xe7, 0x74, 0xbb, 0x3c, 0x3b, 0x4c, 0x73, 0x02, 0xe3, 0x0b, 0xa4, 0x3c, 0xbf, 0x36, 0x32, 0x9d,
+	0xe3, 0x20, 0xe1, 0x1c, 0xe0, 0xeb, 0xa6, 0xb8, 0x97, 0xbf, 0x39, 0xc0, 0x19, 0x56, 0x78, 0x4f,
+	0xc9, 0xb9, 0xbe, 0xa2, 0x83, 0x25, 0xa7, 0xaf, 0xbf, 0xbd, 0x5c, 0x97, 0xe2, 0x5a, 0x66, 0x0a,
+	0x9f, 0x61, 0x75, 0xc5, 0xf8, 0x5a, 0x7d, 0x36, 0x15, 0x15, 0x57, 0x8c, 0xd7, 0x33, 0xfd, 0x67,
+	0xb6, 0x33, 0xa3, 0xca, 0x7c, 0x5d, 0xbe, 0xf9, 0x17, 0x00, 0x00, 0xff, 0xff, 0x5e, 0x73, 0xbd,
+	0x43, 0xf1, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -260,163 +270,229 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// CRUDClient is the client API for CRUD service.
+// MenuManagementClient is the client API for MenuManagement service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type CRUDClient interface {
-	AddMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
-	GetMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
+type MenuManagementClient interface {
+	CreateMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
+	GetMenuByID(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
+	SearchMenuByName(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
 	UpdateMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
 	DeleteMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
+	EnableMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error)
 }
 
-type cRUDClient struct {
+type menuManagementClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewCRUDClient(cc *grpc.ClientConn) CRUDClient {
-	return &cRUDClient{cc}
+func NewMenuManagementClient(cc *grpc.ClientConn) MenuManagementClient {
+	return &menuManagementClient{cc}
 }
 
-func (c *cRUDClient) AddMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+func (c *menuManagementClient) CreateMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
 	out := new(Menu)
-	err := c.cc.Invoke(ctx, "/common.CRUD/AddMenu", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/common.MenuManagement/CreateMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cRUDClient) GetMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+func (c *menuManagementClient) GetMenuByID(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
 	out := new(Menu)
-	err := c.cc.Invoke(ctx, "/common.CRUD/GetMenu", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/common.MenuManagement/GetMenuByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cRUDClient) UpdateMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+func (c *menuManagementClient) SearchMenuByName(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
 	out := new(Menu)
-	err := c.cc.Invoke(ctx, "/common.CRUD/UpdateMenu", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/common.MenuManagement/SearchMenuByName", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cRUDClient) DeleteMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+func (c *menuManagementClient) UpdateMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
 	out := new(Menu)
-	err := c.cc.Invoke(ctx, "/common.CRUD/DeleteMenu", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/common.MenuManagement/UpdateMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// CRUDServer is the server API for CRUD service.
-type CRUDServer interface {
-	AddMenu(context.Context, *MenuRequest) (*Menu, error)
-	GetMenu(context.Context, *MenuRequest) (*Menu, error)
+func (c *menuManagementClient) DeleteMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+	out := new(Menu)
+	err := c.cc.Invoke(ctx, "/common.MenuManagement/DeleteMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *menuManagementClient) EnableMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+	out := new(Menu)
+	err := c.cc.Invoke(ctx, "/common.MenuManagement/EnableMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// MenuManagementServer is the server API for MenuManagement service.
+type MenuManagementServer interface {
+	CreateMenu(context.Context, *MenuRequest) (*Menu, error)
+	GetMenuByID(context.Context, *MenuRequest) (*Menu, error)
+	SearchMenuByName(context.Context, *MenuRequest) (*Menu, error)
 	UpdateMenu(context.Context, *MenuRequest) (*Menu, error)
 	DeleteMenu(context.Context, *MenuRequest) (*Menu, error)
+	EnableMenu(context.Context, *MenuRequest) (*Menu, error)
 }
 
-func RegisterCRUDServer(s *grpc.Server, srv CRUDServer) {
-	s.RegisterService(&_CRUD_serviceDesc, srv)
+func RegisterMenuManagementServer(s *grpc.Server, srv MenuManagementServer) {
+	s.RegisterService(&_MenuManagement_serviceDesc, srv)
 }
 
-func _CRUD_AddMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MenuManagement_CreateMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MenuRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRUDServer).AddMenu(ctx, in)
+		return srv.(MenuManagementServer).CreateMenu(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/common.CRUD/AddMenu",
+		FullMethod: "/common.MenuManagement/CreateMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRUDServer).AddMenu(ctx, req.(*MenuRequest))
+		return srv.(MenuManagementServer).CreateMenu(ctx, req.(*MenuRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRUD_GetMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MenuManagement_GetMenuByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MenuRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRUDServer).GetMenu(ctx, in)
+		return srv.(MenuManagementServer).GetMenuByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/common.CRUD/GetMenu",
+		FullMethod: "/common.MenuManagement/GetMenuByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRUDServer).GetMenu(ctx, req.(*MenuRequest))
+		return srv.(MenuManagementServer).GetMenuByID(ctx, req.(*MenuRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRUD_UpdateMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MenuManagement_SearchMenuByName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MenuRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRUDServer).UpdateMenu(ctx, in)
+		return srv.(MenuManagementServer).SearchMenuByName(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/common.CRUD/UpdateMenu",
+		FullMethod: "/common.MenuManagement/SearchMenuByName",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRUDServer).UpdateMenu(ctx, req.(*MenuRequest))
+		return srv.(MenuManagementServer).SearchMenuByName(ctx, req.(*MenuRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRUD_DeleteMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MenuManagement_UpdateMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MenuRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRUDServer).DeleteMenu(ctx, in)
+		return srv.(MenuManagementServer).UpdateMenu(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/common.CRUD/DeleteMenu",
+		FullMethod: "/common.MenuManagement/UpdateMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRUDServer).DeleteMenu(ctx, req.(*MenuRequest))
+		return srv.(MenuManagementServer).UpdateMenu(ctx, req.(*MenuRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _CRUD_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "common.CRUD",
-	HandlerType: (*CRUDServer)(nil),
+func _MenuManagement_DeleteMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MenuRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MenuManagementServer).DeleteMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/common.MenuManagement/DeleteMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MenuManagementServer).DeleteMenu(ctx, req.(*MenuRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MenuManagement_EnableMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MenuRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MenuManagementServer).EnableMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/common.MenuManagement/EnableMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MenuManagementServer).EnableMenu(ctx, req.(*MenuRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _MenuManagement_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "common.MenuManagement",
+	HandlerType: (*MenuManagementServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "AddMenu",
-			Handler:    _CRUD_AddMenu_Handler,
+			MethodName: "CreateMenu",
+			Handler:    _MenuManagement_CreateMenu_Handler,
 		},
 		{
-			MethodName: "GetMenu",
-			Handler:    _CRUD_GetMenu_Handler,
+			MethodName: "GetMenuByID",
+			Handler:    _MenuManagement_GetMenuByID_Handler,
+		},
+		{
+			MethodName: "SearchMenuByName",
+			Handler:    _MenuManagement_SearchMenuByName_Handler,
 		},
 		{
 			MethodName: "UpdateMenu",
-			Handler:    _CRUD_UpdateMenu_Handler,
+			Handler:    _MenuManagement_UpdateMenu_Handler,
 		},
 		{
 			MethodName: "DeleteMenu",
-			Handler:    _CRUD_DeleteMenu_Handler,
+			Handler:    _MenuManagement_DeleteMenu_Handler,
+		},
+		{
+			MethodName: "EnableMenu",
+			Handler:    _MenuManagement_EnableMenu_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

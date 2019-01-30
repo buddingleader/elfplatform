@@ -4,9 +4,11 @@
 package msp
 
 import (
+	context "context"
 	fmt "fmt"
 	common "github.com/elforg/elfplatform/protos/common"
 	proto "github.com/golang/protobuf/proto"
+	grpc "google.golang.org/grpc"
 	math "math"
 )
 
@@ -22,12 +24,12 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Channel struct {
-	Value                *ChannelValue  `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
-	Policy               *common.Policy `protobuf:"bytes,2,opt,name=policy,proto3" json:"policy,omitempty"`
-	IncludeMenu          *common.Menu   `protobuf:"bytes,3,opt,name=include_menu,json=includeMenu,proto3" json:"include_menu,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
+	Metadata             *common.Metadata `protobuf:"bytes,1,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Policy               *common.Policy   `protobuf:"bytes,2,opt,name=policy,proto3" json:"policy,omitempty"`
+	MenuTree             *common.MenuTree `protobuf:"bytes,3,opt,name=menu_tree,json=menuTree,proto3" json:"menu_tree,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
 }
 
 func (m *Channel) Reset()         { *m = Channel{} }
@@ -55,9 +57,9 @@ func (m *Channel) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Channel proto.InternalMessageInfo
 
-func (m *Channel) GetValue() *ChannelValue {
+func (m *Channel) GetMetadata() *common.Metadata {
 	if m != nil {
-		return m.Value
+		return m.Metadata
 	}
 	return nil
 }
@@ -69,74 +71,249 @@ func (m *Channel) GetPolicy() *common.Policy {
 	return nil
 }
 
-func (m *Channel) GetIncludeMenu() *common.Menu {
+func (m *Channel) GetMenuTree() *common.MenuTree {
 	if m != nil {
-		return m.IncludeMenu
+		return m.MenuTree
 	}
 	return nil
 }
 
-type ChannelValue struct {
-	Metadata             *common.Metadata `protobuf:"bytes,1,opt,name=metadata,proto3" json:"metadata,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
+type ChannelRequest struct {
+	Request              *Channel `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ChannelValue) Reset()         { *m = ChannelValue{} }
-func (m *ChannelValue) String() string { return proto.CompactTextString(m) }
-func (*ChannelValue) ProtoMessage()    {}
-func (*ChannelValue) Descriptor() ([]byte, []int) {
+func (m *ChannelRequest) Reset()         { *m = ChannelRequest{} }
+func (m *ChannelRequest) String() string { return proto.CompactTextString(m) }
+func (*ChannelRequest) ProtoMessage()    {}
+func (*ChannelRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ec99a7156eebaf87, []int{1}
 }
 
-func (m *ChannelValue) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ChannelValue.Unmarshal(m, b)
+func (m *ChannelRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ChannelRequest.Unmarshal(m, b)
 }
-func (m *ChannelValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ChannelValue.Marshal(b, m, deterministic)
+func (m *ChannelRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ChannelRequest.Marshal(b, m, deterministic)
 }
-func (m *ChannelValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ChannelValue.Merge(m, src)
+func (m *ChannelRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ChannelRequest.Merge(m, src)
 }
-func (m *ChannelValue) XXX_Size() int {
-	return xxx_messageInfo_ChannelValue.Size(m)
+func (m *ChannelRequest) XXX_Size() int {
+	return xxx_messageInfo_ChannelRequest.Size(m)
 }
-func (m *ChannelValue) XXX_DiscardUnknown() {
-	xxx_messageInfo_ChannelValue.DiscardUnknown(m)
+func (m *ChannelRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ChannelRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ChannelValue proto.InternalMessageInfo
+var xxx_messageInfo_ChannelRequest proto.InternalMessageInfo
 
-func (m *ChannelValue) GetMetadata() *common.Metadata {
+func (m *ChannelRequest) GetRequest() *Channel {
 	if m != nil {
-		return m.Metadata
+		return m.Request
 	}
 	return nil
 }
 
 func init() {
 	proto.RegisterType((*Channel)(nil), "msp.Channel")
-	proto.RegisterType((*ChannelValue)(nil), "msp.ChannelValue")
+	proto.RegisterType((*ChannelRequest)(nil), "msp.ChannelRequest")
 }
 
 func init() { proto.RegisterFile("msp/channel.proto", fileDescriptor_ec99a7156eebaf87) }
 
 var fileDescriptor_ec99a7156eebaf87 = []byte{
-	// 237 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8f, 0x4f, 0x4b, 0x04, 0x21,
-	0x18, 0xc6, 0x99, 0x96, 0xb6, 0x70, 0x87, 0x68, 0x8c, 0x60, 0xd8, 0x53, 0xec, 0xa1, 0x96, 0x08,
-	0x85, 0xba, 0x76, 0xaa, 0x73, 0x10, 0x1e, 0x3a, 0x74, 0x09, 0xd7, 0x75, 0x67, 0x06, 0x7c, 0x55,
-	0x46, 0x0d, 0xfa, 0x0c, 0x7d, 0xe9, 0xf0, 0xcf, 0x4c, 0x7b, 0x52, 0x7f, 0xcf, 0xcf, 0xd7, 0x47,
-	0xd4, 0x80, 0xb3, 0x54, 0xf4, 0x5c, 0x6b, 0xa9, 0x88, 0x1d, 0x8d, 0x37, 0x78, 0x01, 0xce, 0xae,
-	0x1b, 0x61, 0x00, 0x8c, 0xa6, 0x20, 0x75, 0xc8, 0x7c, 0x7d, 0x55, 0x90, 0x35, 0x6a, 0x10, 0x3f,
-	0x05, 0x5e, 0xcf, 0x9e, 0xe7, 0x7b, 0xee, 0x79, 0xc6, 0x9b, 0xdf, 0x0a, 0x9d, 0xbd, 0xe6, 0xa9,
-	0xf8, 0x0e, 0x9d, 0x7e, 0x73, 0x15, 0x64, 0x5b, 0xdd, 0x54, 0xdb, 0xd5, 0x63, 0x43, 0xc0, 0x59,
-	0x52, 0xc2, 0x8f, 0x18, 0xb0, 0x9c, 0xe3, 0x5b, 0xb4, 0xcc, 0xb3, 0xdb, 0x93, 0x64, 0x5e, 0x90,
-	0x3c, 0x9c, 0xbc, 0x27, 0xca, 0x4a, 0x8a, 0x29, 0xaa, 0x07, 0x2d, 0x54, 0xd8, 0xcb, 0xaf, 0x58,
-	0xaf, 0x5d, 0x24, 0xbb, 0x9e, 0xec, 0x37, 0xa9, 0x03, 0x5b, 0x15, 0x23, 0x1e, 0x36, 0xcf, 0xa8,
-	0x3e, 0x7e, 0x0f, 0x3f, 0xa0, 0xf3, 0xa9, 0x6f, 0x29, 0x75, 0xf9, 0x7f, 0x39, 0x73, 0x36, 0x1b,
-	0x2f, 0xf7, 0x9f, 0xdb, 0x6e, 0xf0, 0x7d, 0xd8, 0x45, 0x87, 0x4a, 0x75, 0x30, 0x63, 0x17, 0x17,
-	0xab, 0xb8, 0x3f, 0x98, 0x11, 0x68, 0xfa, 0xb2, 0xa3, 0xe0, 0xec, 0x6e, 0x99, 0xf6, 0x4f, 0x7f,
-	0x01, 0x00, 0x00, 0xff, 0xff, 0x65, 0x11, 0x03, 0xb7, 0x57, 0x01, 0x00, 0x00,
+	// 291 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0xcf, 0x4a, 0xc3, 0x40,
+	0x10, 0xc6, 0x8d, 0x85, 0x56, 0x47, 0x53, 0xec, 0x16, 0x21, 0xe4, 0x24, 0x39, 0x94, 0x22, 0x9a,
+	0x60, 0xcd, 0xc1, 0xb3, 0x15, 0x3c, 0x15, 0x24, 0xe8, 0xc5, 0x8b, 0x6c, 0xd3, 0x69, 0x5a, 0xc8,
+	0xfe, 0x71, 0x77, 0x73, 0xf0, 0x25, 0x7c, 0x4b, 0xdf, 0x43, 0x92, 0xdd, 0x04, 0xda, 0x5b, 0x4e,
+	0x3b, 0x7c, 0xf3, 0xfd, 0xbe, 0x99, 0xdd, 0x85, 0x09, 0xd3, 0x32, 0xc9, 0x77, 0x94, 0x73, 0x2c,
+	0x63, 0xa9, 0x84, 0x11, 0x64, 0xc0, 0xb4, 0x0c, 0x27, 0xb9, 0x60, 0x4c, 0xf0, 0x84, 0x21, 0xaf,
+	0xac, 0x1e, 0x4e, 0x9d, 0x24, 0x45, 0xb9, 0xcf, 0x7f, 0x9c, 0x78, 0xdd, 0xf9, 0x0c, 0xdd, 0x50,
+	0x43, 0xad, 0x1c, 0xfd, 0x7a, 0x30, 0x5a, 0xda, 0x54, 0x72, 0x07, 0x67, 0x6d, 0x37, 0xf0, 0x6e,
+	0xbc, 0xf9, 0xc5, 0xe2, 0x2a, 0xb6, 0x54, 0xbc, 0x72, 0x7a, 0xd6, 0x39, 0xc8, 0x0c, 0x86, 0x76,
+	0x40, 0x70, 0xda, 0x78, 0xc7, 0xad, 0xf7, 0xad, 0x51, 0x33, 0xd7, 0x25, 0xf7, 0x70, 0x5e, 0xef,
+	0xf6, 0x65, 0x14, 0x62, 0x30, 0x38, 0x8e, 0xe5, 0xd5, 0xbb, 0x42, 0xac, 0x63, 0x6d, 0x15, 0x3d,
+	0xc1, 0xd8, 0xed, 0x93, 0xe1, 0x77, 0x85, 0xda, 0x90, 0x19, 0x8c, 0x94, 0x2d, 0xdd, 0x56, 0x97,
+	0x31, 0xd3, 0x32, 0x6e, 0x5d, 0x6d, 0x73, 0xf1, 0xe7, 0x75, 0xe8, 0x8a, 0x72, 0x5a, 0xa0, 0x22,
+	0x29, 0xf8, 0x4b, 0x85, 0xd4, 0x60, 0x7b, 0xc5, 0xe9, 0x01, 0x6a, 0xc1, 0xf0, 0x20, 0x2f, 0x3a,
+	0x21, 0x0f, 0x00, 0xaf, 0x68, 0x7a, 0x21, 0x29, 0xf8, 0x1f, 0x72, 0xd3, 0x77, 0x50, 0x0a, 0xfe,
+	0x0b, 0x96, 0xd8, 0x8f, 0x7a, 0xbe, 0xfd, 0x9c, 0x17, 0x7b, 0xb3, 0xab, 0xd6, 0xf5, 0x2b, 0x26,
+	0x58, 0x6e, 0x85, 0x2a, 0xea, 0x43, 0x96, 0xd4, 0x6c, 0x85, 0x62, 0x49, 0xf3, 0xb3, 0x3a, 0x61,
+	0x5a, 0xae, 0x87, 0x4d, 0xfd, 0xf8, 0x1f, 0x00, 0x00, 0xff, 0xff, 0x18, 0xae, 0x1b, 0x9d, 0x3e,
+	0x02, 0x00, 0x00,
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// ChannelManagerClient is the client API for ChannelManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type ChannelManagerClient interface {
+	CreateChannel(ctx context.Context, in *ChannelRequest, opts ...grpc.CallOption) (*Channel, error)
+	GetChannel(ctx context.Context, in *ChannelRequest, opts ...grpc.CallOption) (*Channel, error)
+	UpdateChannel(ctx context.Context, in *ChannelRequest, opts ...grpc.CallOption) (*Channel, error)
+	DeleteChannel(ctx context.Context, in *ChannelRequest, opts ...grpc.CallOption) (*Channel, error)
+}
+
+type channelManagerClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewChannelManagerClient(cc *grpc.ClientConn) ChannelManagerClient {
+	return &channelManagerClient{cc}
+}
+
+func (c *channelManagerClient) CreateChannel(ctx context.Context, in *ChannelRequest, opts ...grpc.CallOption) (*Channel, error) {
+	out := new(Channel)
+	err := c.cc.Invoke(ctx, "/msp.ChannelManager/CreateChannel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *channelManagerClient) GetChannel(ctx context.Context, in *ChannelRequest, opts ...grpc.CallOption) (*Channel, error) {
+	out := new(Channel)
+	err := c.cc.Invoke(ctx, "/msp.ChannelManager/GetChannel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *channelManagerClient) UpdateChannel(ctx context.Context, in *ChannelRequest, opts ...grpc.CallOption) (*Channel, error) {
+	out := new(Channel)
+	err := c.cc.Invoke(ctx, "/msp.ChannelManager/UpdateChannel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *channelManagerClient) DeleteChannel(ctx context.Context, in *ChannelRequest, opts ...grpc.CallOption) (*Channel, error) {
+	out := new(Channel)
+	err := c.cc.Invoke(ctx, "/msp.ChannelManager/DeleteChannel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ChannelManagerServer is the server API for ChannelManager service.
+type ChannelManagerServer interface {
+	CreateChannel(context.Context, *ChannelRequest) (*Channel, error)
+	GetChannel(context.Context, *ChannelRequest) (*Channel, error)
+	UpdateChannel(context.Context, *ChannelRequest) (*Channel, error)
+	DeleteChannel(context.Context, *ChannelRequest) (*Channel, error)
+}
+
+func RegisterChannelManagerServer(s *grpc.Server, srv ChannelManagerServer) {
+	s.RegisterService(&_ChannelManager_serviceDesc, srv)
+}
+
+func _ChannelManager_CreateChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChannelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChannelManagerServer).CreateChannel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/msp.ChannelManager/CreateChannel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChannelManagerServer).CreateChannel(ctx, req.(*ChannelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChannelManager_GetChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChannelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChannelManagerServer).GetChannel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/msp.ChannelManager/GetChannel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChannelManagerServer).GetChannel(ctx, req.(*ChannelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChannelManager_UpdateChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChannelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChannelManagerServer).UpdateChannel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/msp.ChannelManager/UpdateChannel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChannelManagerServer).UpdateChannel(ctx, req.(*ChannelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChannelManager_DeleteChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChannelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChannelManagerServer).DeleteChannel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/msp.ChannelManager/DeleteChannel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChannelManagerServer).DeleteChannel(ctx, req.(*ChannelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _ChannelManager_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "msp.ChannelManager",
+	HandlerType: (*ChannelManagerServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateChannel",
+			Handler:    _ChannelManager_CreateChannel_Handler,
+		},
+		{
+			MethodName: "GetChannel",
+			Handler:    _ChannelManager_GetChannel_Handler,
+		},
+		{
+			MethodName: "UpdateChannel",
+			Handler:    _ChannelManager_UpdateChannel_Handler,
+		},
+		{
+			MethodName: "DeleteChannel",
+			Handler:    _ChannelManager_DeleteChannel_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "msp/channel.proto",
 }

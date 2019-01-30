@@ -21,15 +21,18 @@ message MenuTree {
     repeated Menu sub_menus = 3;
 }
 
-service CRUD {
-    rpc AddMenu(MenuRequest) returns (Menu){}
-    rpc GetMenu(MenuRequest) returns (Menu){}
+service MenuManagement {
+    rpc CreateMenu(MenuRequest) returns (Menu){}
+    rpc GetMenuByID(MenuRequest) returns (Menu){}
+    rpc SearchMenuByName(MenuRequest) returns (Menu){}
     rpc UpdateMenu(MenuRequest) returns (Menu){}
     rpc DeleteMenu(MenuRequest) returns (Menu){}
+    rpc EnableMenu(MenuRequest) returns (Menu){}
 }
 
 message MenuRequest {
     int32 root_menu_id = 1;
     string root_menu_name = 2;
     Menu menu = 3;
+    bool enable = 4;
 }

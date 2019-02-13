@@ -39,7 +39,7 @@ type DB struct {
 }
 
 // CreateDB constructs a `DB`
-func CreateDB(conf *Config) *DB {a
+func CreateDB(conf *Config) *DB {
 	readOpts := &opt.ReadOptions{}
 	writeOptsNoSync := &opt.WriteOptions{}
 	writeOptsSync := &opt.WriteOptions{}
@@ -107,7 +107,7 @@ func (dbInstance *DB) Close() {
 func (dbInstance *DB) Get(key []byte) ([]byte, error) {
 	value, err := dbInstance.db.Get(key, dbInstance.readOpts)
 	if err == leveldb.ErrNotFound {
-		logger.Warnf("leveldb.ErrNotFound, key: %s", string(key))
+		logger.Debugf("leveldb.ErrNotFound, key: %s", string(key))
 		return nil, nil
 	}
 
